@@ -1,100 +1,89 @@
 # VSFS Journaling File System
 
-A simple journaling file system simulator written in C. This project demonstrates how modern file systems use journaling to ensure consistency and recover from crashes.
+A simplified journaling file system implemented in C that demonstrates transaction logging and crash recovery techniques used in modern file systems such as ext3 and ext4.
+
+## Overview
+
+This project operates on a virtual disk image (`vsfs.img`) and uses a write-ahead journal to ensure filesystem consistency. Instead of directly modifying filesystem metadata, updates are first recorded in a journal and committed as a transaction. The transaction can later be installed to the actual filesystem, allowing recovery from unexpected crashes.
 
 ## Features
 
-- Create files using inode-based metadata management
-- Journal metadata updates before applying them to disk
-- Commit-based transaction handling
-- Crash recovery through journal replay
-- Virtual disk image support (`vsfs.img`)
-- Directory and inode management
+* Inode-based file management
+* Directory entry creation
+* Inode bitmap allocation
+* Write-ahead logging (WAL)
+* Transaction commit records
+* Journal replay and recovery
+* Virtual disk block management
+* Crash-safe metadata updates
 
-## Concepts Demonstrated
-
-- File Systems
-- Journaling
-- rash Recovery
-- Inodes
-- Directory Entries
-- Bitmaps
-- Transactions
-- Disk Block Management
-- Low-Level File I/O
-  
-## Project Structure
+## Journal Workflow
 
 ```text
-journal.c      - Main journaling implementation
-vsfs.img       - Virtual file system image
+Create File
+     │
+     ▼
+Write Metadata Updates
+     │
+     ▼
+Append Journal Records
+     │
+     ▼
+Write Commit Record
+     │
+     ▼
+Install Transaction
+     │
+     ▼
+Update Filesystem Blocks
 ```
 
-## Build
+Only committed transactions are applied to the filesystem.
 
-Compile using GCC:
-
-```bash
-gcc journal.c -o journal
-```
-
-## Usage
+## Commands
 
 ### Create a File
 
 ```bash
-./journal create filename
+gcc journal.c -o journal
+
+./journal create file1.txt
 ```
 
-Example:
-
-```bash
-./journal create notes.txt
-```
-
-Output:
-
-```text
-Created notes.txt (inum X) in journal
-```
-
-### Install Journal
-
-Apply all committed journal transactions to the file system:
+### Install Journal Transactions
 
 ```bash
 ./journal install
 ```
 
-Output:
+## File System Concepts Used
 
-```text
-Journal installed.
-```
+* Journaling
+* Transactions
+* Inodes
+* Directory Entries
+* Bitmaps
+* Disk Blocks
+* Crash Recovery
+* Metadata Consistency
+* Low-Level File I/O
 
-## How It Works
+## Technologies
 
-When a file is created:
+1. C
+2. POSIX System Calls
 
-1. Metadata blocks are loaded.
-2. A free inode is allocated.
-3. Directory entries are updated.
-4. Changes are written to the journal.
-5. A commit record is added.
-6. Transactions can later be installed to the file system.
+  * open()
+  * read()
+  * write()
+  * lseek()
+3. GCC
 
-This approach ensures that committed operations can be recovered even after unexpected crashes.
+## Educational Purpose
 
-## Learning Objectives
-
-This project was developed to understand:
-
-- How journaling file systems work
-- Transaction-based updates
-- Metadata consistency
-- Crash recovery mechanisms
-- Operating system storage concepts
+This project was developed to understand how journaling file systems maintain consistency and recover from failures using transaction-based updates.
 
 ## Author
 
 Maria Zaman Oyshi
+
